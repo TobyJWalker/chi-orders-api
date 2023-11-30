@@ -57,7 +57,7 @@ func (a *App) Start(ctx context.Context) error {
 			ch <- fmt.Errorf("error starting server: %w", err) // send error to channel
 		}
 
-		// close the channel if no error
+		// close the channel if error
 		close(ch)
 	}()
 
