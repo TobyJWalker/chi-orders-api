@@ -24,6 +24,8 @@ func New() *App {
 	// check psql errors
 	if err != nil {
 		panic(err)
+	} else {
+		fmt.Println("[+] psql connected")
 	}
 
 	// create app and assign router function as handler
