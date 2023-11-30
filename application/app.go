@@ -15,10 +15,11 @@ import (
 type App struct {
 	router http.Handler
 	psql *gorm.DB
+	config Config
 }
 
 // function to construct new app
-func New() *App {
+func New(config Config) *App {
 
 	// create psql connection
 	psql, err := gorm.Open(postgres.Open("host=localhost dbname=chi-orders-db port=5432 sslmode=disable"))
@@ -39,6 +40,7 @@ func New() *App {
 	// create app and assign router function as handler
 	app := &App{
 		psql: psql,
+		config: config,
 	}
 
 	// load routes
@@ -52,7 +54,7 @@ func (a *App) Start(ctx context.Context) error {
 
 	// create server
 	server := &http.Server{
-		Addr: ":3000",
+		Addr: fmt.Sprintf(":%d", a.config.ServerPort),
 		Handler: a.router,
 	}
 

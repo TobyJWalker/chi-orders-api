@@ -12,7 +12,7 @@ import (
 func main() {
 
 	// create new app
-	app := application.New()
+	app := application.New(application.LoadConfig())
 
 	// create root context with signal which listens for SIGINT
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
