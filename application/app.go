@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"time"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -46,14 +47,32 @@ func (a *App) Start(ctx context.Context) error {
 		Handler: a.router,
 	}
 
-	// listen and server
-	err := server.ListenAndServe()
+	// create channel to listen for errors from server goroutine
+	ch := make(chan error, 1) // 1 is buffer size
 
-	// handle errors
-	if err != nil {
-		return fmt.Errorf("error starting server: %w", err)
+	// goroutine to start server
+	go func() {
+		err := server.ListenAndServe()
+		if err != nil {
+			ch <- fmt.Errorf("error starting server: %w\n", err) // send error to channel
+		}
+
+		// close the channel if no error
+		close(ch)
+	}()
+
+	// select statement to listen for context cancellation or error from server goroutine
+	select {
+	
+	// graceful shutdown with timeout
+	case <-ctx.Done():
+		timeout, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+
+		return server.Shutdown(timeout)
+	
+	// error from server goroutine
+	case err := <-ch:
+		return err
 	}
-
-	// return nil if success
-	return nil
 }
