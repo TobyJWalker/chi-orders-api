@@ -2,14 +2,22 @@ package main
 
 import (
 	"net/http"
+
+	"github.com/go-chi/chi/v5"
 )
 
 func main() {
 
+	// create chi router
+	router := chi.NewRouter()
+
+	// create route
+	router.Get("/", basicHandler)
+
 	// create server
 	server := &http.Server{
 		Addr: ":3000", // port
-		Handler: http.HandlerFunc(basicHandler), // interface when server recieves request
+		Handler: router, // interface when server recieves request
 	}
 
 	// start server
