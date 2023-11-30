@@ -54,7 +54,7 @@ func (a *App) Start(ctx context.Context) error {
 	go func() {
 		err := server.ListenAndServe()
 		if err != nil {
-			ch <- fmt.Errorf("error starting server: %w\n", err) // send error to channel
+			ch <- fmt.Errorf("error starting server: %w", err) // send error to channel
 		}
 
 		// close the channel if no error
