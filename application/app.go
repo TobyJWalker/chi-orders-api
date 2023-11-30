@@ -1,6 +1,7 @@
 package application
 
 import (
+	"chi-orders-api/model"
 	"context"
 	"fmt"
 	"net/http"
@@ -29,11 +30,19 @@ func New() *App {
 		fmt.Println("[+] psql connected")
 	}
 
+	// migrate models
+	err = psql.AutoMigrate(&model.Order{}, &model.LineItem{})
+	if err != nil {
+		panic(err)
+	}
+
 	// create app and assign router function as handler
 	app := &App{
-		router: loadRoutes(),
 		psql: psql,
 	}
+
+	// load routes
+	app.loadRoutes()
 
 	return app
 }

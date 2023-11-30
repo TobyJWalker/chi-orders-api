@@ -7,10 +7,11 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 
 	"chi-orders-api/handler"
+	"chi-orders-api/repository/order"
 )
 
 // loadRoutes function to load routes
-func loadRoutes() *chi.Mux {
+func (a *App) loadRoutes() {
 
 	// create chi router
 	router := chi.NewRouter()
@@ -24,16 +25,20 @@ func loadRoutes() *chi.Mux {
 	})
 
 	// orders route
-	router.Route("/orders", loadOrderRoutes)
+	router.Route("/orders", a.loadOrderRoutes)
 
-	return router
+	a.router = router
 }
 
 // loadOrderRoutes function to load order routes
-func loadOrderRoutes(router chi.Router) {
+func (a *App) loadOrderRoutes(router chi.Router) {
 
 	// create order handler
-	orderHandler := &handler.Order{}
+	orderHandler := &handler.Order{
+		Repo: &order.PostgresRepo{
+			Client: a.psql,
+		},
+	}
 
 	// create routes for http methods
 	router.Post("/", orderHandler.Create)
