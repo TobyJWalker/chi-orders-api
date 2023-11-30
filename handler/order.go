@@ -66,7 +66,27 @@ func (o *Order) Create(w http.ResponseWriter, r *http.Request) {
 
 // list method
 func (o *Order) List(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("list order")
+	
+	// get orders
+	orders, err := o.Repo.FindAll(r.Context())
+	if err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	// marshall orders to json
+	res, err := json.Marshal(orders)
+	if err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	// write response
+	w.Write(res)
+	w.WriteHeader(http.StatusOK)
+
 }
 
 // get by id method

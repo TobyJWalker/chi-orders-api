@@ -74,7 +74,7 @@ func (r *PostgresRepo) FindAll(ctx context.Context) ([]model.Order, error) {
 	var orders []model.Order
 
 	// find orders
-	err := r.Client.Find(&orders).Error
+	err := r.Client.Preload("LineItems").Find(&orders).Error
 	if err != nil {
 		return orders, fmt.Errorf("failed to find all: %w", err)
 	}
