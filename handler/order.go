@@ -3,12 +3,14 @@ package handler
 import (
 	"chi-orders-api/model"
 	"chi-orders-api/repository/order"
+	"strconv"
 
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 )
 
@@ -91,7 +93,40 @@ func (o *Order) List(w http.ResponseWriter, r *http.Request) {
 
 // get by id method
 func (o *Order) GetByID(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("get order by id")
+	
+	// get id from url
+	idParam := chi.URLParam(r, "id")
+
+	// convert to uint64
+	const base = 10
+	const bitSize = 64
+	orderID, err := strconv.ParseUint(idParam, base, bitSize)
+	if err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	// get order
+	order, err := o.Repo.FindByID(r.Context(), orderID)
+	if err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	// marshall order to json
+	res, err := json.Marshal(order)
+	if err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	// write response
+	w.Write(res)
+	w.WriteHeader(http.StatusOK)
+
 }
 
 // update by id method
