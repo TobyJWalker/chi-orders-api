@@ -32,7 +32,7 @@ func (r *PostgresRepo) FindByID(ctx context.Context, id uint64) (model.Order, er
 	var order model.Order
 
 	// find order
-	err := r.Client.First(&order, id).Error
+	err := r.Client.Preload("LineItems").First(&order, id).Error
 	if err != nil {
 		return order, fmt.Errorf("failed to find: %w", err)
 	}
