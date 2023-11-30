@@ -1,15 +1,19 @@
 package main
 
 import (
-	"net/http"
+	"net/http" // http package
 
-	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5"            // chi plugin
+	"github.com/go-chi/chi/v5/middleware" // chi middleware
 )
 
 func main() {
 
 	// create chi router
 	router := chi.NewRouter()
+
+	// add middleware
+	router.Use(middleware.Logger) // log requests
 
 	// create route
 	router.Get("/", basicHandler)
