@@ -12,6 +12,9 @@ import (
 	"gorm.io/gorm"
 )
 
+// database connection attempts
+const CONN_ATTEMPTS = 10
+
 // create an app struct to store dependencies
 type App struct {
 	router http.Handler
@@ -39,18 +42,33 @@ func New(config Config) *App {
 		connStr = "host=localhost dbname=chi-orders-db port=5432 sslmode=disable"
 	}
 
-	// create psql connection
-	psql, err := gorm.Open(postgres.Open(connStr))
+	var psql *gorm.DB
+	var dbConnected bool = false
 
-	// check psql errors
-	if err != nil {
-		panic(err)
-	} else {
-		fmt.Println("[+] psql connected")
+	// attempt to connect to database multiple times
+	for i := 0; i < CONN_ATTEMPTS && !dbConnected; i++ {
+
+		// create psql connection
+		var err error
+		psql, err = gorm.Open(postgres.Open(connStr))
+
+		// check psql errors
+		if err != nil {
+			fmt.Printf("[-] psql connection error: %s\n", err.Error())
+			time.Sleep(10 * time.Second)
+		} else {
+			fmt.Println("[+] psql connected")
+			dbConnected = true
+		}
+	}
+
+	// check if database connected
+	if !dbConnected {
+		panic("[-] failed to connect to database")
 	}
 
 	// migrate models
-	err = psql.AutoMigrate(&model.Order{}, &model.LineItem{})
+	err := psql.AutoMigrate(&model.Order{}, &model.LineItem{})
 	if err != nil {
 		panic(err)
 	}
