@@ -18,13 +18,11 @@ services:
         timeout: 3s
         retries: 3
 
-  animal-repo:
+  chi-order-api:
     build: '.'
     ports:
       - 80:8082
-    container_name: animal-repo
-    volumes:
-      - animal-volume:/var/images
+    container_name: chi-order-api
     environment:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_USER=postgres
