@@ -10,3 +10,13 @@ To run the application you will need to have a Postgres database running locally
 ```bash
 createdb chi-orders-db
 ```
+
+The server runs on port 3000 by default. It can be started with the following commands:
+
+```bash
+go run .
+
+OR
+
+env SERVER_PORT=<port> go run .
+```
