@@ -32,6 +32,8 @@ docker-compose build
 docker-compose up -d
 ```
 
+Shutdown the container with: `docker-compose down`
+
 You can connect to the container through port 80 (default http port).
 
 
@@ -50,20 +52,20 @@ The API will communicate via JSON and will return JSON responses. Here are some 
 In the scripts folder, there is a python script which will let you send some example data to the API. You can run it with the following command (Python 3.8+ required):
 
 ```bash
-// docker
+# docker
 python scripts/make-example-orders.py
 
-// local
+# local
 env SERVER_PORT=<port> python scripts/make-example-orders.py
 ```
 
 ### GET /orders
 
 ```bash
-// docker
+# docker
 curl -X GET http://localhost/orders
 
-// local
+# local
 curl -X GET http://localhost:<port>/orders
 ```
 
@@ -71,10 +73,10 @@ curl -X GET http://localhost:<port>/orders
 ### GET /orders/{id}
 
 ```bash
-// docker
+# docker
 curl -X GET http://localhost/orders/1
 
-// local
+# local
 curl -X GET http://localhost:<port>/orders/1
 ```
 
@@ -86,16 +88,16 @@ You can send PUT requests to update the status of an order. An order must be shi
 - completed
 
 ```bash
-// docker
-// update order 1 to shipped
+# docker
+# update order 1 to shipped
 curl -X PUT -d '{"status": "shipped"}' http://localhost/orders/1
-// update order 1 to completed
+# update order 1 to completed
 curl -X PUT -d '{"status": "completed"}' http://localhost/orders/1
 
-// local
-// update order 1 to shipped
+# local
+# update order 1 to shipped
 curl -X PUT -d '{"status": "shipped"}' http://localhost:<port>/orders/1
-// update order 1 to completed
+# update order 1 to completed
 curl -X PUT -d '{"status": "completed"}' http://localhost:<port>/orders/1
 ```
 
