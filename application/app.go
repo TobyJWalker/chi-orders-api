@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"gorm.io/driver/postgres"
@@ -21,8 +22,25 @@ type App struct {
 // function to construct new app
 func New(config Config) *App {
 
+	var connStr string
+
+	// check environment
+	if os.Getenv("APP_ENV") == "production" {
+		
+		// set production (docker) database
+		PG_PASS := os.Getenv("POSTGRES_PASSWORD")
+		PG_USER := os.Getenv("POSTGRES_USER")
+		PG_DB := os.Getenv("POSTGRES_DB")
+
+		// connection string
+		connStr = fmt.Sprintf("host=postgres user=%s password=%s dbname=%s port=5432 sslmode=disable", PG_USER, PG_PASS, PG_DB)
+
+	} else {
+		connStr = "host=localhost dbname=chi-orders-db port=5432 sslmode=disable"
+	}
+
 	// create psql connection
-	psql, err := gorm.Open(postgres.Open("host=localhost dbname=chi-orders-db port=5432 sslmode=disable"))
+	psql, err := gorm.Open(postgres.Open(connStr))
 
 	// check psql errors
 	if err != nil {
