@@ -8,7 +8,6 @@ import (
 // configuration structure
 type Config struct {
 	ServerPort uint16
-	Environment string
 }
 
 // function to load configs
@@ -23,10 +22,5 @@ func LoadConfig() Config {
 			cfg.ServerPort = uint16(port)
 		}
 	}
-
-	if app_env, exists := os.LookupEnv("APP_ENV"); exists {
-		cfg.Environment = app_env
-	}
-
 	return cfg
 }
