@@ -14,7 +14,6 @@ type Config struct {
 func LoadConfig() Config {
 	cfg := Config{
 		ServerPort: 3000,
-		Environment: "development",
 	}
 
 	if serverPort, exists := os.LookupEnv("SERVER_PORT"); exists {
